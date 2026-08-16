@@ -14,32 +14,36 @@
 # 기능별 피드백
 
 ## 기능 1 — load_data
- DATA_PATH = "data/tech_docs.csv" 로 변경하고, python을 프로젝트 루트(doc-search-project/)에서 실행하면 해결됩니다. 함수 이름도 def load_data(file_path): 형태로 바꿔보세요. 
- => 수정내용 
-- 이름: function1 → load_data
-- DATA_PATH 절대경로 → 상대경로 data/tech_docs.csv
-- 함수 안에서 DATA_PATH 대신 인자 file_path 사용
-- main()에서 df = load_data(...) 로 반환값 받기
-
-
-
+**받은 피드백**
+- 함수명이 `function1`인데 명세는 `load_data()`
+- `DATA_PATH`가 절대경로로 하드코딩되어 다른 환경에서 실행 불가
+  
+**수정내용**
+- 이름: `function1` → `load_data`
+- `DATA_PATH` 절대경로 → 상대경로 `data/tech_docs.csv`
+- 함수 안에서 `DATA_PATH` 대신 인자 `file_path` 사용
+- `main()`에서 `df = load_data(...)` 로 반환값 받기
 
 ## 기능 2 — explore_structure
-✅ shape, columns, dtypes, head(5), info()를 모두 출력하고 각 블록마다 구분선(=====)을 붙여 가독성을 잘 챙기셨습니다. 요구사항의 모든 출력 항목을 충족합니다.
-
-⚠️ 함수 이름을 explore_structure(df)로 맞춰주시면 명세와 완전히 일치합니다. 기능 자체는 잘 동작합니다.
-
-💡 def explore_structure(df): 로 이름만 변경해 주세요.
+**받은 피드백**
+- `shape`, `columns`, `dtypes`, `head(5)`, `info()` 출력 항목은 모두 충족
+- 함수명이 `function2`인데 명세는 `explore_structure(df)`
+  
+**수정내용**
+- 이름: `function2` → `explore_structure`
 
 ## 기능 3 — show_category_distribution
-✅ value_counts()로 카테고리별 문서 수와 비율(%)을 출력하고, unique()로 고유 카테고리를 추출한 뒤 반복문과 딕셔너리 없이 리스트 컴프리헨션으로 평균 단어 수를 계산하는 구조가 잘 짜여 있어요. 비율 계산 로직도 정확합니다.
+**받은 피드백**
+- `value_counts()`로 카테고리별 문서 수와 비율 출력, `unique()`로 고유 카테고리 추출하는 구조는 잘 구성됨
+- 반복문과 딕셔너리로 카테고리별 평균 단어 수를 계산하라는 요구가 있었으나 dict에 저장하는 부분이 없음
+- 함수가 dict를 반환해야 하는데 반환값 없음
+- 변수 `cat`을 `value_counts()`용과 반복문용으로 동시에 사용해 첫 번째 값이 덮어씌워지는 버그
 
-⚠️ 두 가지 성장 포인트가 있어요. 첫째, 요구사항에서 '반복문과 딕셔너리를 사용해 카테고리별 평균 단어 수를 계산'하도록 명시하고 있는데, 딕셔너리에 결과를 저장하는 부분이 빠져 있습니다. 둘째, 함수가 dict를 반환해야 하는데 현재는 반환값이 없습니다. 또한 변수명 cat을 value_counts()용과 반복문용으로 동시에 사용해 첫 번째 cat이 덮어씌워지는 버그가 있어요.
-
-cat = df["category"].value_counts()
-for cat, count in df["category"].value_counts().items():  # 위의 cat이 덮어씌워짐
-    ...
-💡 아래처럼 딕셔너리를 활용하고 반환값을 추가해 보세요:
+**수정내용**
+- 이름: `function3` → `show_category_distribution`
+- 사용하지 않는 `cat = df["category"].value_counts()` 줄 삭제
+- 계산용 for문과 출력용 for문으로 분리, 결과를 `result` dict에 저장
+- `return result` 추가
 
 def show_category_distribution(df):
     result = {}
@@ -54,46 +58,40 @@ def show_category_distribution(df):
     return result
 
 ## 기능 4 — check_missing
-✅ 컬럼별로 isnull().sum()을 확인하고 비율에 따라 낮음/주의/높음 심각도를 분기하는 핵심 로직을 잘 구현하셨습니다. 결측치가 없는 컬럼에 안내 메시지를 출력하는 점도 좋아요.
+**받은 피드백**
+- `isnull().sum()`으로 컬럼별 결측치를 확인하고 비율에 따라 낮음/주의/높음으로 분기하는 핵심 로직은 잘 구현됨
+- `df`를 인자로 받지 않고 내부에서 `pd.read_csv()`를 다시 호출함
+- 결측치 없는 컬럼도 개별 출력됨 (명세는 목록으로 별도 출력)
+- 결측치가 있는 컬럼은 개수와 비율(%)도 함께 출력해야 함
 
-⚠️ 세 가지를 보완하면 더 좋습니다. 첫째, 함수가 df를 인자로 받지 않고 내부에서 pd.read_csv()를 다시 호출하고 있어요. 이미 불러온 df를 재활용하면 불필요한 파일 읽기를 줄일 수 있습니다. 둘째, 요구사항은 '결측치가 1개 이상인 컬럼만 출력'하고 '결측치 없는 컬럼 목록을 별도로 출력'하도록 명시하는데, 현재는 결측치 없는 컬럼도 개별 출력됩니다. 셋째, 결측치가 있는 컬럼의 경우 결측치 수와 비율(%)도 함께 출력하면 명세를 완전히 충족합니다. 마지막으로 함수가 dict를 반환해야 합니다.
-
-def function4():
-  df=pd.read_csv(DATA_PATH)  # 인자 없이 파일을 다시 읽음
-💡 def check_missing(df): 로 인자를 받도록 변경하고, missing_cols와 clean_cols 리스트를 분리해서 결측치 있는 컬럼만 상세 출력한 뒤 결측치 없는 컬럼 목록을 한 번에 출력하는 구조로 바꿔보세요. 결과는 딕셔너리로 반환하는 것도 잊지 마세요.
+**수정내용**
+- 이름: `function4` → `check_missing`
+- `df`를 인자로 받도록 변경, 내부 `pd.read_csv()` 제거
+- `clean_cols` 리스트에 모아 마지막에 한 줄로 출력
+- `missing_cols` 리스트에 컬럼명·개수·비율·심각도를 dict로 담아 상세 출력
 
 ## 기능 5 — numpy_doc_stats
-✅ dropna()로 결측치를 제거한 뒤 반복문으로 단어 수 배열을 만들고, ddof=1을 지정해 pandas와 동일한 표본표준편차를 계산한 점이 훌륭합니다. 조건 필터링(word_arr < 50)도 NumPy 방식으로 정확히 구현하셨어요. pd.Series(words).describe()로 비교 출력을 포함한 것도 좋습니다.
+**받은 피드백**
+- `dropna()` 후 단어 수 배열을 만들고 `ddof=1`로 표본표준편차를 계산한 점, `word_arr < 50` 조건 필터링은 정확히 구현됨
+- 50단어 미만 문서를 찾을 때 단어 수 배열만 출력하고 문서 식별 정보(`doc_id`, `title`)가 없음
+- pandas와 NumPy 수치가 일치하는지 명시적인 비교 메시지 필요
 
-⚠️ 두 가지를 보완하면 더 좋습니다. 첫째, 50단어 미만 문서가 있을 때 단어 수 배열(words_length)만 출력하고 있는데, 요구사항은 해당 문서를 '찾아서 출력'하도록 하므로 doc_id나 title 같은 문서 식별 정보를 함께 보여주면 더 완성도 있습니다. 둘째, describe() 비교 출력에서 pandas와 NumPy 수치가 '일치한다/다르다'는 명시적인 비교 메시지가 있으면 요구사항을 완전히 충족합니다.
-
-words_length = word_arr[word_arr < 50]
-if len(words_length) == 0:
-    print("50단어 미만의 문서 : 없음.")
-else:
-    print(words_length)  # 단어 수만 출력, 문서 정보 없음
-💡 아래처럼 df를 활용해 문서 정보를 함께 출력하고 비교 메시지를 추가해 보세요:
-
-short_doc_mask = word_arr < 50
-short_docs = df.dropna(subset=['content']).reset_index(drop=True)[short_doc_mask]
-print(short_docs[['doc_id','title']])
-
-pandas_std = pd.Series(words).std()
-print(f'pandas std: {round(pandas_std,2)}, NumPy std(ddof=1): {round(words_SD,2)}')
-print('일치' if round(pandas_std,2)==round(words_SD,2) else '불일치 — ddof 확인 필요')
+**수정내용**
+- 이름: `function5` → `numpy_doc_stats`
+- 조건식을 `short_doc_mask` 변수로 분리해 `word_arr`와 `df` 양쪽에 재사용
+- 해당 문서의 `doc_id`, `title`을 출력하도록 변경
+- pandas `std()`와 NumPy `std(ddof=1)` 비교 및 일치 여부 메시지 추가
 
 ## main()
-✅ DATA_PATH 상수를 파일 상단에 선언하고, if __name__ == '__main__': 블록으로 진입점을 명확히 한 점이 좋습니다. 함수 호출 순서도 요구사항 흐름과 일치합니다.
+**받은 피드백**
+- `DATA_PATH` 상수를 상단에 선언하고 `if __name__ == '__main__':`으로 진입점을 명확히 한 점은 좋음
+- `function4()`가 `df` 인자 없이 호출되어 내부에서 파일을 다시 읽는 구조
+- 함수명이 명세와 달라 `main()`이 문서 역할을 못 함
 
-⚠️ function4()가 df 인자 없이 호출되고 있어서 내부에서 파일을 다시 읽는 구조가 됩니다. check_missing(df)로 인자를 전달하도록 수정하면 전체 흐름이 깔끔해집니다. 또한 함수 이름들이 요구사항 명세(load_data, explore_structure 등)와 달라서, 이름을 맞춰주면 main() 코드가 문서 역할도 겸할 수 있습니다.
-
-def main():
-    df = function1()
-    function2(df)
-    function3(df)
-    function4()   # df를 받지 않아 내부에서 파일 재로드
-    function5(df)
-💡 함수 이름을 명세에 맞게 변경한 뒤 main()을 아래처럼 정리해 보세요:
+**수정내용**
+- 모든 함수명을 명세에 맞게 변경
+- `df = load_data(DATA_PATH)`로 반환값 받도록 수정
+- `check_missing(df)`로 인자 전달
 
 def main():
     df = load_data(DATA_PATH)
@@ -103,5 +101,5 @@ def main():
     numpy_doc_stats(df)
     
 ============================================================================================
-
+위 받은 피드백을 제 나름대로 AI와 책을 토대로 수정을 하였지만 이 코드가 좋은 코드인지 판단이 아직 서지 않아 튜터님께 다시 피드백을 요청 드립니다. 
 
