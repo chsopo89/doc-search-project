@@ -1,8 +1,10 @@
 # doc-search-project
 마일스톤으로 이번 KANT 시작 전 4주 프로젝트로 data/tech_docs.csv 하에 기술 문서 60건을 넘파이/판다스로 탐색하고 기초 통계를 하는 프로젝트로 1주차부터 4주차까지 쌓입니다. 
 마일스톤에서 주마다 4개에서 5개의 문제를 주고 파이썬으로 풀고 깃허브 주소를 올리는 형식으로 구성이 되었는데 현재 문제를 확인이 안되어 1주차 피드백 내용을 바탕으로 요구 사항을 재구성 된 점 양해 부탁드립니다.
+
 ## 데이터 
  data/tech_docs.csv - 기술 문건이 60건,  doc_id, title, category, content, source 구성이 되어 있으며 카테고리는 Python, Git, AI기초, NumPy, pandas 5종입니다.
+
 ## 실행
 프로젝트 루트에서 `python weekX/main.py`
 `DATA_PATH`를 절대경로에서 상대경로 `data/tech_docs.csv`로 바꾸면서, 실행 위치가 프로젝트 루트가 아니면 CSV를 찾지 못하는 문제가 생겼습니다. 그래서 프로젝트 루트에서 실행하도록 했습니다. (VS Code 설정 쪽은 더 편한 방법을 찾아보겠습니다.)
