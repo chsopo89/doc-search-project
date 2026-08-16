@@ -84,12 +84,8 @@
 - `df = load_data(DATA_PATH)`로 반환값 받도록 수정
 - `check_missing(df)`로 인자 전달
 
-def main():
-    df = load_data(DATA_PATH)
-    explore_structure(df)
-    show_category_distribution(df)
-    check_missing(df)
-    numpy_doc_stats(df)
+<img width="546" height="272" alt="image" src="https://github.com/user-attachments/assets/09056616-db93-4f21-8b96-803b0d74c036" />
+
     
 ============================================================================================
 위 받은 피드백을 제 나름대로 AI와 책을 토대로 수정을 하였지만 이 코드가 좋은 코드인지 판단이 아직 서지 않아 튜터님께 다시 피드백을 요청 드립니다. 
