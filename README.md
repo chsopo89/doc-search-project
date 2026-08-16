@@ -45,17 +45,8 @@
 - 계산용 for문과 출력용 for문으로 분리, 결과를 `result` dict에 저장
 - `return result` 추가
 
-def show_category_distribution(df):
-    result = {}
-    for cat in df['category'].unique():
-        texts = df[df['category'] == cat]['content']
-        avg = sum(len(t.split()) for t in texts) / len(texts)
-        count = len(texts)
-        result[cat] = {'count': count, 'avg_words': round(avg, 2)}
-    for cat, info in result.items():
-        ratio = round(info['count'] / len(df) * 100, 2)
-        print(f"{cat}: {info['count']}건 {ratio}% | 평균단어수: {info['avg_words']}")
-    return result
+<img width="1035" height="459" alt="image" src="https://github.com/user-attachments/assets/1a4260be-b076-41f0-be30-592ee9675bc2" />
+
 
 ## 기능 4 — check_missing
 **받은 피드백**
