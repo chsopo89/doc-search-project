@@ -3,12 +3,12 @@ import os
 import numpy as np
 import sys
 
-DATA_PATH = "C:/Users/chsop/doc-search-project/data/tech_docs.csv"
+DATA_PATH = "data/tech_docs.csv"
 
-def function1():
+def load_data(file_path): 
   print("="*11,"기능 1","="*11)
-  if os.path.exists(DATA_PATH):
-    df = pd.read_csv(DATA_PATH, encoding="utf-8-sig")
+  if os.path.exists(file_path):
+    df = pd.read_csv(file_path, encoding="utf-8-sig")
     print(f"데이터 로드 완료: {df.shape[0]}행 × {df.shape[1]}열")
   else:
     print("파일이 없습니다. 프로그램을 즉시 종료합니다.")
@@ -16,7 +16,7 @@ def function1():
   print("="*30)
   return df
 
-def function2(df):
+def explore_structure(df): 
   print("="*11,"기능 2","="*11)
   print(f"데이터의 크기 : 행 : {df.shape[0]} 열: {df.shape[1]}")
   print("="*30)
@@ -29,27 +29,28 @@ def function2(df):
   print("데이터 요약 정보  ") 
   df.info()
 
-def function3(df):
+def show_category_distribution(df):
   print("="*11,"기능 3","="*11)
-  cat = df["category"].value_counts()
   print("카테고리 문서 수와 비율")
-  for cat, count in df["category"].value_counts().items():
-    print(f"{cat}: {count} 건 {round(count/(len(df))*100,2)} %")
-  print("카테고리별 평균단어 수")
-  cat_uni = df["category"].unique()
-  for cat in cat_uni:
-    texts = df[df["category"] == cat]["content"]
-    counts = [len(text.split()) for text in texts]
-    avg = sum(counts) / len(counts)
-    print(f"{cat} : {round(avg,2)} 단어")
+  result = {}
+  for cat in df['category'].unique():
+      texts = df[df['category'] == cat]['content']
+      avg = sum(len(t.split()) for t in texts) / len(texts)
+      count = len(texts)
+      result[cat] = {'count': count, 'avg_words': round(avg, 2)}
+  for cat, info in result.items():
+      ratio = round(info['count'] / len(df) * 100, 2)
+      print(f"{cat}: {info['count']}건 {ratio}% | 평균단어수: {info['avg_words']}")
+  return result
 
-def function4():
+def check_missing(df):
   print("="*11,"기능 4","="*11) 
   df=pd.read_csv(DATA_PATH)
+  clean_cols = []
   for column in df.columns:
     count = df[column].isnull().sum()
-    if count == 0 :
-      print(f"{column} : 결측치가 없습니다.")
+    if count == 0 :  
+      clean_cols.append(column)
     else:
       rate = df[column].isnull().sum() / len(df)*100
       if rate < 5:
@@ -58,8 +59,9 @@ def function4():
         print(f"{column} : 결측치 심각도 기준 주의")
       else:
         print(f"{column} : 결측치 심각도 기준 높음")
+  print("결측치 없는 컬럼:", ", ".join(clean_cols))
 
-def function5(df):  
+def numpy_doc_stats(df):  
   print("="*11,"기능 5","="*11) 
   content = df["content"].dropna()
   words = [] 
@@ -84,11 +86,11 @@ def function5(df):
   print(round(pd.Series(words).describe(),2))
 
 def main():
-    df = function1()
-    function2(df)
-    function3(df)
-    function4()
-    function5(df)
+    df = load_data(DATA_PATH) 
+    explore_structure(df) 
+    show_category_distribution(df)
+    check_missing(df)
+    numpy_doc_stats(df)
 
 if __name__ == "__main__":
     main()
